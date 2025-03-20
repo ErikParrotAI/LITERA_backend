@@ -10,9 +10,26 @@ class CountrySerializer(serializers.ModelSerializer):
 
 
 class LocationSerializer(serializers.ModelSerializer):
+    geojson = serializers.SerializerMethodField()
+
     class Meta:
         model = Location
-        fields = ['id', 'name', 'address', 'work_schedule']
+        fields = ['id', 'name', 'address', 'work_schedule', 'latitude', 'longitude', 'geojson','instagram_link']
+
+    def get_geojson(self, obj):
+        return {
+            "type": "Feature",
+            "properties": {
+                "name": obj.name,
+                "address": obj.address,
+                "work_schedule": obj.work_schedule,
+                "instagram_link": obj.instagram_link
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [float(obj.longitude), float(obj.latitude)]
+            }
+        }
 
 
 class AuthorSerializer(serializers.ModelSerializer):
