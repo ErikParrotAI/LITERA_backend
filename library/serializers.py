@@ -20,6 +20,7 @@ class LocationSerializer(serializers.ModelSerializer):
         return {
             "type": "Feature",
             "properties": {
+                "location_id": obj.id,
                 "name": obj.name,
                 "address": obj.address,
                 "work_schedule": obj.work_schedule,

@@ -6,9 +6,6 @@ from django_filters.rest_framework import DjangoFilterBackend
 from .models import Book, Author, Category, Publishing, Location, Review
 from .serializers import (
     BookSerializer,
-    AuthorSerializer,
-    CategorySerializer,
-    PublishingSerializer,
     LocationSerializer,
     ReviewSerializer
 )
@@ -24,9 +21,13 @@ class BookViewSet(viewsets.ModelViewSet):
     ordering = ['name']  # сортування за замовчуванням
 
     def get_queryset(self):
-        # Використовуємо select_related для ForeignKey полів (publishing, location)
-        # та prefetch_related для ManyToMany полів (authors, categories)
-        return Book.objects.all().select_related('publishing', 'location').prefetch_related('authors', 'categories')
+        queryset = Book.objects.all().select_related('publishing', 'location').prefetch_related('authors', 'categories')
+
+        location_id = self.request.query_params.get('location_id')
+        if location_id:
+            queryset = queryset.filter(location_id=location_id)
+
+        return queryset
 
     def get_permissions(self):
         if self.action in ['list', 'retrieve']:
