@@ -1,0 +1,111 @@
+use LITERS_db;
+
+INSERT INTO library_location (name, address, work_schedule, longitude, latitude, instagram_link) VALUES
+('КНИГИ на Княгині Ольги канцтовари, іграшки (мережа ''Перший Клас'')', 'вулиця Княгині Ольги, 65, Львів, Львівська область, 79053', 'пн - пт : 09:30 - 19:30\nсб - нд : 10:00 - 18:00', 24.000630643042836, 49.81013835294826,'https://www.instagram.com/pershyy_klas/'),
+('Книгарня КСД', 'ТЦ Скриня, вулиця Городоцька, 179, 4 поверх, Львів, Львівська область, 79000', 'пн - нд : 10:00 - 20:00', 23.997106167279707, 49.83577505800432,'https://www.instagram.com/ksd_bookclub/'),
+('Книголенд', 'ТЦ Скриня, вулиця Городоцька, 179, 4 поверх, Львів, Львівська область, 79000', 'пн - нд : 10:00 - 20:00', 23.988793100255517, 49.82469504227944,'https://www.instagram.com/knigoland/'),
+('Книжковий Лев', '14, проспект Шевченка, Львів, Львівська область, 79000', 'пн - нд : 11:00 - 20:00', 24.03120338995908, 49.836774972086864,'https://www.instagram.com/booklion.lviv.ua/'),
+('Halinbook', 'вулиця Івана Огієнка, 14, Львів, Львівська область, 79000', 'пн - пт : 10:00 - 19:00\nсб - нд : зачинено', 24.022019506325385, 49.842476508661676,'https://www.instagram.com/halinbook/');
+
+
+INSERT INTO library_country (name) VALUES
+('United Kingdom'),
+('United States'),
+('France'),
+('Russia'),
+('Spain'),
+('Germany'),
+('Italy'),
+('Canada'),
+('Brazil'),
+('Japan');
+
+
+INSERT INTO library_author (full_name, date_of_birth, country_id) VALUES
+('George Orwell', '1903-06-25', 1),  -- Великобританія
+('Harper Lee', '1926-04-28', 2),  -- США
+('Jane Austen', '1775-12-16', 1),  -- Великобританія
+('Fyodor Dostoevsky', '1821-11-11', 4),  -- Росія
+('J.K. Rowling', '1965-07-31', 1);  -- Великобританія
+
+
+INSERT INTO library_publishing (name, country_id) VALUES
+('Penguin Books', 1),  -- Великобританія
+('HarperCollins', 2),  -- США
+('Oxford University Press', 1),  -- Великобританія
+('Random House', 2),  -- США
+('Macmillan Publishers', 1);  -- Великобританія
+
+
+INSERT INTO library_category (name) VALUES
+('Fiction'),
+('Classic'),
+('Fantasy'),
+('Science Fiction'),
+('Mystery'),
+('Historical'),
+('Horror'),
+('Biography'),
+('Adventure'),
+('Drama');
+
+
+INSERT INTO library_book (location_id, name, year_of_publication, language, number_of_pages, publishing_id) VALUES
+(1, '1984', 1949, 'English', 328, 1),
+(2, 'To Kill a Mockingbird', 1960, 'English', 281, 2),
+(3, 'Pride and Prejudice', 1813, 'English', 432, 3),
+(4, 'Crime and Punishment', 1866, 'Russian', 671, 4),
+(5, 'Harry Potter and the Sorcerer''s Stone', 1997, 'English', 309, 5),
+(1, 'Moby Dick', 1851, 'English', 635, 1),
+(2, 'Brave New World', 1932, 'English', 311, 2),
+(3, 'The Brothers Karamazov', 1880, 'Russian', 824, 3),
+(4, 'Fahrenheit 451', 1953, 'English', 194, 4),
+(5, 'One Hundred Years of Solitude', 1967, 'Spanish', 417, 5),
+(1, 'The Hobbit', 1937, 'English', 310, 1),
+(2, 'Les Misérables', 1862, 'French', 1463, 2),
+(3, 'Don Quixote', 1605, 'Spanish', 863, 3),
+(4, 'Dracula', 1897, 'English', 418, 4),
+(5, 'The Divine Comedy', 1320, 'Italian', 798, 5),
+(1, 'Ulysses', 1922, 'English', 730, 1),
+(2, 'The Picture of Dorian Gray', 1890, 'English', 254, 2),
+(3, 'Anna Karenina', 1877, 'Russian', 864, 3),
+(4, 'The Catcher in the Rye', 1951, 'English', 277, 4),
+(5, 'Wuthering Heights', 1847, 'English', 400, 5);
+
+
+INSERT INTO library_book_authors (book_id, author_id) VALUES
+(1, 1),
+(2, 2),
+(3, 3),
+(4, 4),
+(5, 5),
+(6, 1),
+(7, 1),
+(8, 4),
+(9, 1),
+(10, 1),
+(11, 5),
+(12, 3),
+(13, 3),
+(14, 1),
+(15, 4),
+(16, 2),
+(17, 4),
+(18, 4),
+(19, 2),
+(20, 3);
+
+
+INSERT INTO library_book_categories (book_id, category_id) VALUES
+(1, 4), (2, 2), (3, 2), (4, 6), (5, 3),
+(6, 1), (7, 4), (8, 6), (9, 4), (10, 1),
+(11, 3), (12, 6), (13, 5), (14, 7), (15, 8),
+(16, 2), (17, 4), (18, 5), (19, 9), (20, 10);
+
+
+INSERT INTO library_book_locations (book_id, location_id) VALUES
+(1, 1), (2, 2), (3, 3), (4, 4), (5, 5),
+(6, 1), (7, 2), (8, 3), (9, 4), (10, 5),
+(11, 1), (12, 2), (13, 3), (14, 4), (15, 5),
+(16, 1), (17, 2), (18, 3), (19, 4), (20, 5);
+
