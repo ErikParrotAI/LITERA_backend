@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, permissions, filters
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -67,10 +68,29 @@ def autocomplete_suggestions(request):
     return Response(suggestions_list)
 
 
-class LocationViewSet(viewsets.ReadOnlyModelViewSet):
+class LocationViewSet(viewsets.ModelViewSet):
     queryset = Location.objects.all()
     serializer_class = LocationSerializer
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def list(self, request, *args, **kwargs):
+        locations = self.get_queryset()
+        serializer = self.get_serializer(locations, many=True)
+
+        geojson = {
+            "type": "FeatureCollection",
+            "features": [location["geojson"] for location in serializer.data]
+        }
+
+        return Response(geojson)
+
+    def retrieve(self, request, *args, **kwargs):
+        location = get_object_or_404(Location, pk=kwargs.get("pk"))
+        serializer = self.get_serializer(location)
+
+        geojson = serializer.data.get("geojson", {})
+
+        return Response(geojson)
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
