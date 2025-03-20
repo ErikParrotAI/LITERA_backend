@@ -1,4 +1,7 @@
 from rest_framework import viewsets, permissions, filters
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from django_filters.rest_framework import DjangoFilterBackend
 from .models import Book, Author, Category, Publishing, Location, Review
 from .serializers import (
     BookSerializer,
@@ -8,13 +11,16 @@ from .serializers import (
     LocationSerializer,
     ReviewSerializer
 )
+from .filters import BookFilter
 
 
 class BookViewSet(viewsets.ModelViewSet):
-    queryset = Book.objects.all()
+    queryset = Book.objects.all().select_related('publishing', 'location').prefetch_related('authors', 'categories')
     serializer_class = BookSerializer
-    filter_backends = [filters.SearchFilter]
-    search_fields = ['name', 'authors__full_name', 'publishing__name', 'categories__name', 'language']
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
+    filterset_class = BookFilter
+    ordering_fields = ['year_of_publication', 'name', 'number_of_pages']
+    ordering = ['name']  # сортування за замовчуванням
 
     def get_queryset(self):
         # Використовуємо select_related для ForeignKey полів (publishing, location)
@@ -27,22 +33,38 @@ class BookViewSet(viewsets.ModelViewSet):
         return [permissions.IsAuthenticated()]
 
 
-class AuthorViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Author.objects.all()
-    serializer_class = AuthorSerializer
-    permission_classes = [permissions.AllowAny]
+@api_view(['GET'])
+def autocomplete_suggestions(request):
+    search_term = request.query_params.get('search', '').strip()
+    if not search_term:
+        return Response([])
 
+    suggestions = set()
 
-class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Category.objects.all()
-    serializer_class = CategorySerializer
-    permission_classes = [permissions.AllowAny]
+    # 1) Назви книжок
+    book_names = Book.objects.filter(name__icontains=search_term).values_list('name', flat=True)
+    suggestions.update(book_names)
 
+    # 2) Імена авторів
+    author_names = Author.objects.filter(full_name__icontains=search_term).values_list('full_name', flat=True)
+    suggestions.update(author_names)
 
-class PublishingViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Publishing.objects.all()
-    serializer_class = PublishingSerializer
-    permission_classes = [permissions.AllowAny]
+    # 3) Назви видавництв
+    publishing_names = Publishing.objects.filter(name__icontains=search_term).values_list('name', flat=True)
+    suggestions.update(publishing_names)
+
+    # 4) Назви категорій
+    category_names = Category.objects.filter(name__icontains=search_term).values_list('name', flat=True)
+    suggestions.update(category_names)
+
+    # 5) Назви локацій
+    location_names = Location.objects.filter(name__icontains=search_term).values_list('name', flat=True)
+    suggestions.update(location_names)
+
+    # Формуємо відсортований список, обрізаємо до 10 результатів
+    suggestions_list = sorted(suggestions)[:10]
+
+    return Response(suggestions_list)
 
 
 class LocationViewSet(viewsets.ReadOnlyModelViewSet):
