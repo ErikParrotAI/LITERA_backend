@@ -25,6 +25,14 @@ class CustomUserViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(request.user)
         return Response(serializer.data)
 
+    @action(detail=False, methods=['patch'], permission_classes=[permissions.IsAuthenticated])
+    def update_info(self, request):
+        user = request.user
+        serializer = self.get_serializer(user, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
     @action(detail=False, methods=['post'], permission_classes=[permissions.IsAuthenticated])
     def change_password(self, request):
         user = request.user
