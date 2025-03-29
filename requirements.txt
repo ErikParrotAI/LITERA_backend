@@ -11,7 +11,7 @@ pillow==11.1.0
 PyJWT==2.9.0
 pytz==2025.1
 PyYAML==6.0.2
+RapidFuzz==3.12.2
 sqlparse==0.5.3
 typing_extensions==4.12.2
 uritemplate==4.1.1
-django-cors-headers==25.0.1
